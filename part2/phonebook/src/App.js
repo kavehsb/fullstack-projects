@@ -8,10 +8,16 @@ const Person = ({name, number}) => {
 
 const App = () => {
   const [persons, setPersons] = useState([
-    { name: 'Arto Hellas', number: '040-1234567' }
+    { name: 'Arto Hellas', number: '040-123456', id: 1 },
+    { name: 'Ada Lovelace', number: '39-44-5323523', id: 2 },
+    { name: 'Dan Abramov', number: '12-43-234345', id: 3 },
+    { name: 'Mary Poppendieck', number: '39-23-6423122', id: 4 }
   ])
   const [newName, setNewName] = useState('')
   const [newNum, setNewNum] = useState('')
+  const [nameToSearch, setNameToSearch] = useState('')
+
+  const filteredNames = persons.filter(person => person.name.toLowerCase().includes(nameToSearch.toLowerCase()))
 
   const addPerson = (event) => {
     event.preventDefault()
@@ -38,16 +44,21 @@ const App = () => {
   }
   const handleNewName = event => setNewName(event.target.value)
   const handleNewNum = event => setNewNum(event.target.value)
-
+  const handleNameToSearch = event => setNameToSearch(event.target.value)
   return (
     <div>
-      <h2>Phonebook</h2>
+      <h1>Phonebook</h1>
+      <h2>Search by name</h2>
+      <div>
+        search: <input value={nameToSearch} onChange={handleNameToSearch} />
+      </div>
+      <h2>Add entry to phonebook</h2>
       <form onSubmit={addPerson}>
         <div>
-          name: <input value={newName} onChange={handleNewName} />
+          name: <input value={newName} onChange={handleNewName} required />
         </div>
         <div>
-          number: <input value={newNum} onChange={handleNewNum} />
+          number: <input value={newNum} onChange={handleNewNum} required />
         </div>
         <div>
           <button type="submit">add</button>
@@ -55,7 +66,7 @@ const App = () => {
       </form>
       <h2>Numbers</h2>
       <ul>
-        {persons.map(person => 
+        {filteredNames.map(person => 
           <Person key={person.name} name={person.name} number={person.number} />)}
       </ul>
     </div>
