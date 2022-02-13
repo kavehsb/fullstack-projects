@@ -66,6 +66,8 @@ const CountryInfo = (country) => {
 }
   
 const Countries = ({filterCountries, countryInfoClicked}) => {
+    // If the number of countries that matches the search parameters
+    // is within the range of 2-10 inclusive
     if (filterCountries.length <= 10 && filterCountries.length > 1) {
         return (
         <ul>
@@ -78,15 +80,18 @@ const Countries = ({filterCountries, countryInfoClicked}) => {
             )}
         </ul>
         )
+    // If exactly one country matches the search parameters
     } else if (filterCountries.length === 1) {
         return (
             <CountryInfo country={filterCountries[0]} />
         )
+    // If no country matches the search parameters
     } else if (filterCountries.length === 0) {
         return (
             <p>No country found</p>
         )
     }
+    // If the amount of countries to display is greater than 10
     return (
         <p>Too many countries to show, try searching for one</p>
     )
