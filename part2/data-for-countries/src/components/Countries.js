@@ -1,8 +1,8 @@
 import React from "react"
 
-const CountryNameList = ({countryName}) => {
+const CountryNameList = ({countryName, countryInfoClicked}) => {
     return (
-      <li>{countryName}</li>
+      <li>{countryName} <button onClick={countryInfoClicked(countryName)}>info</button></li>
     )
 }
 
@@ -43,11 +43,11 @@ const CountryLanguages = ({languages}) => {
 
 const CountryFlag = ({flag}) => {
     return (
-      <img src={flag} width={100} size={100} />
+      <img src={flag} alt="Country Flag" width={100} size={100} />
     )
 }
   
-  const CountryInfo = (country) => {
+const CountryInfo = (country) => {
     const {country: {name}} = country
     const {country: {flags}} = country
     const {country: {capital}} = country
@@ -65,21 +65,22 @@ const CountryFlag = ({flag}) => {
     )
 }
   
-const Countries = ({filterCountries}) => {
+const Countries = ({filterCountries, countryInfoClicked}) => {
     if (filterCountries.length <= 10 && filterCountries.length > 1) {
         return (
         <ul>
             {filterCountries.map(country => 
-            <CountryNameList 
-                key={country.name.common} 
-                countryName={country.name.common} 
-            />
+                <CountryNameList 
+                    key={country.name.common} 
+                    countryName={country.name.common} 
+                    countryInfoClicked={countryInfoClicked}
+                /> 
             )}
         </ul>
         )
     } else if (filterCountries.length === 1) {
         return (
-        <CountryInfo country={filterCountries[0]} />
+            <CountryInfo country={filterCountries[0]} />
         )
     } else if (filterCountries.length === 0) {
         return (

@@ -20,6 +20,11 @@ const App = () => {
 
 
   const handleCountryToSearch = (event) => setCountryToSearch(event.target.value)
+  const countryInfoClicked = (cts) => {
+    return (
+      () => setCountryToSearch(cts)
+    )
+  }
 
   return (
     <div >
@@ -30,7 +35,9 @@ const App = () => {
       
       <Countries 
         filterCountries={filterCountries}
+        countryInfoClicked={countryInfoClicked}
       />
+
     </div>
   );
 }
