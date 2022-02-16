@@ -67,6 +67,15 @@ const App = () => {
             }, 3000)
             setPersons(persons.map(p => p.id !== existingPerson.id ? p : updateData))
           })
+          .catch(error => {
+            setOpMessage(`${newName} does not exist in the server`)
+            setOperation('Error')
+            setTimeout(() => {
+              setOpMessage(null)
+              setOperation('')
+            }, 3000)
+            setPersons(persons.filter(p => p.id !== existingPerson.id))
+          })
         }
         resetInputFields()
     } else {

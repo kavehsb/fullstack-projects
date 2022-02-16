@@ -7,6 +7,12 @@ const OperationMessage = ({message, operation}) => {
                 {message}
             </div>
         )
+    } else if (operation === 'Error') {
+        return (
+            <div className='errMessage'>
+                {message}
+            </div>
+        )
     }
     return (
         <div className='opMessage'>
