@@ -3,6 +3,8 @@ import Persons from './components/Persons'
 import Filter from './components/Filter'
 import PersonForm from './components/PersonForm'
 import phonebookServices from './services/phonebookServices'
+import OperationMessage from './components/OperationMessage'
+import './index.css'
 
 const App = () => {
   // States
@@ -11,6 +13,8 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newNum, setNewNum] = useState('')
   const [nameToSearch, setNameToSearch] = useState('')
+  const [opMessage, setOpMessage] = useState(null)
+  const [operation, setOperation] = useState('')
   //-----------------------------------------------------
 
   // Filtered array depending on user search input in the search text field
@@ -56,13 +60,23 @@ const App = () => {
         if (window.confirm(`${newName} already exists in the phonebook, replace old number with a new one?`)) {
           phonebookServices
           .updateNum(existingPerson.id, newPerson)
-          .then(updateData => setPersons(persons.map(p => p.id !== existingPerson.id ? p : updateData)))
+          .then(updateData => {
+            setOpMessage(`Updated the number for ${newName} to ${newNum}`)
+            setTimeout(() => {
+              setOpMessage(null)
+            }, 3000)
+            setPersons(persons.map(p => p.id !== existingPerson.id ? p : updateData))
+          })
         }
         resetInputFields()
     } else {
       phonebookServices
       .createData(newPerson)
       .then(responseData => { 
+        setOpMessage(`Added ${newName}`)
+        setTimeout(() => {
+          setOpMessage(null)
+        }, 3000)
         setPersons(persons.concat(responseData))
         resetInputFields()
       })
@@ -80,7 +94,15 @@ const App = () => {
     if (window.confirm(`Delete ${name}?`)) {
       phonebookServices
       .deleteData(id)
-      .then(() => setPersons(persons.filter(p => p.id !== id)))
+      .then(() => {
+        setOperation('Delete')
+        setOpMessage(`Deleted ${name}`)
+        setTimeout(() => {
+          setOpMessage(null)
+          setOperation('')
+        }, 3000)
+        setPersons(persons.filter(p => p.id !== id))
+      })
     }
   }
   //-----------------------------------------------------
@@ -100,6 +122,8 @@ const App = () => {
     <div>
 
       <h1>Phonebook</h1>
+
+      <OperationMessage message={opMessage} operation={operation} />
 
       <Filter 
       nameToSearch={nameToSearch} 
