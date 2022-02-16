@@ -5,15 +5,23 @@ import PersonForm from './components/PersonForm'
 import phonebookServices from './services/phonebookServices'
 
 const App = () => {
+  // States
+  //-----------------------------------------------------
   const [persons, setPersons] = useState([])
   const [newName, setNewName] = useState('')
   const [newNum, setNewNum] = useState('')
   const [nameToSearch, setNameToSearch] = useState('')
+  //-----------------------------------------------------
 
+  // Filtered array depending on user search input in the search text field
+  //-----------------------------------------------------
   const filteredNames = persons.filter(person => 
     person.name.toLowerCase().includes(nameToSearch.toLowerCase())
   )
+  //-----------------------------------------------------
 
+  // Retrieve initial data
+  //-----------------------------------------------------
   const fetchInitialData = () => {
     phonebookServices
     .fetchData()
@@ -22,7 +30,16 @@ const App = () => {
     })
   } 
   useEffect(fetchInitialData, [])
+  //-----------------------------------------------------
 
+  // Requests to the backend (json server)
+  //-----------------------------------------------------
+  /*
+    Creates a person object that contains data given user input via the text 
+    fields (with basic input validation). Then calls the create data service 
+    that returns response data from the respective POST request to the json
+    server and updates the local persons storage to that of the json server
+  */
   const addPerson = (event) => {
     event.preventDefault()
     const newPerson = {
@@ -46,6 +63,24 @@ const App = () => {
     }   
   }
 
+  /*
+    Upon button click and confirmation from the user, calls the deleteData
+    service in phonebookServices to send a delete request to the json server
+    with the appropriate person id for that specific delete button. Then
+    updates the local persons storage with the json server and rerenders
+    the data accordingly
+  */
+  const deletePerson = (id, name) => {
+    if (window.confirm(`Delete ${name}?`)) {
+      phonebookServices
+      .deleteData(id)
+      .then(() => setPersons(persons.filter(p => p.id !== id)))
+    }
+  }
+  //-----------------------------------------------------
+
+  // Helper functions/App component state handlers
+  //-----------------------------------------------------
   const resetInputFields = () => {
     setNewName('')
     setNewNum('')
@@ -53,14 +88,7 @@ const App = () => {
   const handleNewName = event => setNewName(event.target.value)
   const handleNewNum = event => setNewNum(event.target.value)
   const handleNameToSearch = event => setNameToSearch(event.target.value)
-
-  const deleteEntry = (id, name) => {
-    if (window.confirm(`Delete ${name}?`)) {
-      phonebookServices
-      .deleteData(id)
-      .then(() => setPersons(persons.filter(p => p.id !== id)))
-    }
-  }
+  //-----------------------------------------------------
 
   return (
     <div>
@@ -84,7 +112,7 @@ const App = () => {
 
       <Persons
         filteredNames={filteredNames}
-        buttonHandler={deleteEntry}
+        buttonHandler={deletePerson}
       />
 
     </div>
