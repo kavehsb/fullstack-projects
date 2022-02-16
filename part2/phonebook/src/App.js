@@ -47,12 +47,18 @@ const App = () => {
       number: newNum
     }
 
-    if (persons.some(person => person.name === newName)) {
-      alert(`Name: ${newName} already exists in the phonebook`)
-      resetInputFields()
-    } else if (persons.some(person => person.number === newNum)) {
+    const existingPerson = persons.find(person => person.name === newName)
+
+    if (persons.some(person => person.number === newNum)) {
       alert(`Phone number: ${newNum} already exists in the phonebook`)
       resetInputFields()
+    } else if (persons.some(person => person.name === newName) && existingPerson) {
+        if (window.confirm(`${newName} already exists in the phonebook, replace old number with a new one?`)) {
+          phonebookServices
+          .updateNum(existingPerson.id, newPerson)
+          .then(updateData => setPersons(persons.map(p => p.id !== existingPerson.id ? p : updateData)))
+        }
+        resetInputFields()
     } else {
       phonebookServices
       .createData(newPerson)

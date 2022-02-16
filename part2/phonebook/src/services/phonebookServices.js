@@ -14,6 +14,10 @@ const deleteData = id => {
     return axios.delete(baseUrl + `/${id}`)
 }
 
-const exportFunctions = {fetchData, createData, deleteData}
+const updateNum = (id, updatedNum) => {
+    return axios.put(baseUrl + `/${id}`, updatedNum).then(response => response.data)
+}
+
+const exportFunctions = {fetchData, createData, deleteData, updateNum}
 
 export default exportFunctions
