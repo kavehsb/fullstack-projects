@@ -54,6 +54,14 @@ const App = () => {
   const handleNewNum = event => setNewNum(event.target.value)
   const handleNameToSearch = event => setNameToSearch(event.target.value)
 
+  const deleteEntry = (id, name) => {
+    if (window.confirm(`Delete ${name}?`)) {
+      phonebookServices
+      .deleteData(id)
+      .then(() => setPersons(persons.filter(p => p.id !== id)))
+    }
+  }
+
   return (
     <div>
 
@@ -76,6 +84,7 @@ const App = () => {
 
       <Persons
         filteredNames={filteredNames}
+        buttonHandler={deleteEntry}
       />
 
     </div>
