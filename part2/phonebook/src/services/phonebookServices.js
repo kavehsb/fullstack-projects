@@ -1,5 +1,5 @@
 import axios from "axios"
-const baseUrl = 'https://stormy-sierra-33072.herokuapp.com/api/persons'
+const baseUrl = '/api/persons'
 
 
 const fetchData = () => {
