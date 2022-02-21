@@ -89,6 +89,13 @@ const App = () => {
         setPersons(persons.concat(responseData))
         resetInputFields()
       })
+      .catch(error => {
+        setOpMessage(error.response.data)
+        setTimeout(() => {
+          setOpMessage(null)
+        }, 3000)
+        resetInputFields()
+      })
     }   
   }
 
