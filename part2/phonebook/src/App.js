@@ -19,9 +19,7 @@ const App = () => {
 
   // Filtered array depending on user search input in the search text field
   //-----------------------------------------------------
-  const filteredNames = persons.filter(person => 
-    person.name.toLowerCase().includes(nameToSearch.toLowerCase())
-  )
+  const filteredNames = persons.filter(person => person.name.toLowerCase().includes(nameToSearch.toLowerCase()))
   //-----------------------------------------------------
 
   // Retrieve initial data
@@ -61,6 +59,7 @@ const App = () => {
           phonebookServices
           .updateNum(existingPerson.id, newPerson)
           .then(updateData => {
+            console.log(updateData)
             setOpMessage(`Updated the number for ${newName} to ${newNum}`)
             setTimeout(() => {
               setOpMessage(null)
@@ -68,13 +67,22 @@ const App = () => {
             setPersons(persons.map(p => p.id !== existingPerson.id ? p : updateData))
           })
           .catch(error => {
-            setOpMessage(`${newName} does not exist in the server`)
-            setOperation('Error')
-            setTimeout(() => {
-              setOpMessage(null)
-              setOperation('')
-            }, 3000)
-            setPersons(persons.filter(p => p.id !== existingPerson.id))
+            if (error.name === 'TypeError') {
+              setOpMessage(`${newName} does not exist in the server`)
+              setOperation('Error')
+              setTimeout(() => {
+                setOpMessage(null)
+                setOperation('')
+              }, 3000)
+              setPersons(persons.filter(p => p.id !== existingPerson.id))
+            } else {
+              setOpMessage(error.response.data)
+              setOperation('Error')
+              setTimeout(() => {
+                setOpMessage(null)
+                setOperation('')
+              }, 3000)
+            }
           })
         }
         resetInputFields()
@@ -91,6 +99,7 @@ const App = () => {
       })
       .catch(error => {
         setOpMessage(error.response.data)
+        setOperation('Error')
         setTimeout(() => {
           setOpMessage(null)
         }, 3000)
