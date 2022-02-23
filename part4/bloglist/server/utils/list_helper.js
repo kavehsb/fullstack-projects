@@ -9,7 +9,6 @@ const totalLikes = (blogs) => {
 
 // Find author with most blogs and return the author as well as the number of blogs
 const mostBlogs = (blogs) => {
-
 	// Condense the input blog list into a new object with key value pairs
 	// being the author and the count of blogs they have written
 	const list = blogs.reduce((ret, blog) => {
@@ -34,8 +33,31 @@ const mostBlogs = (blogs) => {
 			};
 		}
 	}
-
 	return most;
+};
+
+// Find the author who has recieved the most amount of likes on their blogs
+// and return the author and the total amount of likes as a new object
+const mostLikes = (blogs) => {
+	const list = blogs.reduce((ret, blog) => {
+		if (blog.author in ret) {
+			ret[blog.author] += blog.likes;
+		} else {
+			ret[blog.author] = blog.likes;
+		}
+		return ret;
+	}, {});
+
+	let mostLikes = {};
+	for (let i in list) {
+		if (Object.keys(mostLikes).length === 0 || list[i] > Object.values(mostLikes)[1]) {
+			mostLikes = {
+				author: i,
+				likes: list[i]
+			};
+		}
+	}
+	return mostLikes;
 };
 
 // Find the blog with the most amount of likes and return it
@@ -56,6 +78,7 @@ const filter = ({ title, author, likes }) => ({ title, author, likes });
 // Exports
 module.exports = {
 	totalLikes,
-	favoriteBlog,
-	mostBlogs
+	mostBlogs,
+	mostLikes,
+	favoriteBlog
 };

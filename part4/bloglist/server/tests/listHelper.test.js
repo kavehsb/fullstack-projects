@@ -121,3 +121,15 @@ describe('most blogs', () => {
 		);
 	});
 });
+
+// Testing if the author who has recieved the most amount of likes on their blogs
+// is returned from a list of multiple blogs
+describe('most likes on blogs', () => {
+	test('author who has recieved most likes on their blogs', () => {
+		const result = listHelper.mostLikes(listWithMultipleBlogs);
+		expect(result).toEqual({
+			author: 'Edsger W. Dijkstra',
+			likes: 17
+		});
+	});
+});
