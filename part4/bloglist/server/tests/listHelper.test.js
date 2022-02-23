@@ -94,7 +94,7 @@ describe('favorite blog', () => {
 		);
 	});
 
-	// Testing if the blog with the most amount og likes is returned from
+	// Testing if the blog with the most amount of likes is returned from
 	// a list of multiple blogs
 	test('favorite blog from list of multiple blogs', () => {
 		const result = listHelper.favoriteBlog(listWithMultipleBlogs);
@@ -104,6 +104,20 @@ describe('favorite blog', () => {
 				author: 'Edsger W. Dijkstra',
 				likes: 12,
 			},
+		);
+	});
+});
+
+// Testing if the author who has written the most amount of blogs is returned
+// from a list of multiple blogs
+describe('most blogs', () => {
+	test('author of most blogs given list of blogs', () => {
+		const result = listHelper.mostBlogs(listWithMultipleBlogs);
+		expect(result).toEqual(
+			{
+				author: 'Robert C. Martin',
+				blogs: 3
+			}
 		);
 	});
 });
