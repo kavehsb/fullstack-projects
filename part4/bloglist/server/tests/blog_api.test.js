@@ -47,6 +47,13 @@ test('get all blogs from /api/blogs', async () => {
 	expect(response.body).toHaveLength(initialBlogs.length);
 });
 
+// Test that each blog has an id property
+test('each blog has an id property', async () => {
+	const response = await Blog.find({});
+
+	response.forEach(blog => expect(blog.id).toBeDefined());
+});
+
 // Close the DB connection after tests complete
 afterAll(() => {
 	mongoose.connection.close();
