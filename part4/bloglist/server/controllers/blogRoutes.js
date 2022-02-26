@@ -8,12 +8,9 @@ const Blog = require('../models/blog');
  * indicates we want all of the documents for this specific
  * database. Then sends back the data as a response of type JSON.
  */
-blogsRouter.get('/', (request, response) => {
-	Blog
-		.find({})
-		.then(blogs => {
-			response.json(blogs);
-		});
+blogsRouter.get('/', async (request, response) => {
+	const blogs = await Blog.find({});
+	response.send(blogs);
 });
 
 /**
@@ -21,14 +18,11 @@ blogsRouter.get('/', (request, response) => {
  * saves it to the database. This returns a response with
  * status 201 if successful and the respective request body
  */
-blogsRouter.post('/', (request, response) => {
+blogsRouter.post('/', async (request, response) => {
 	const blog = new Blog(request.body);
 
-	blog
-		.save()
-		.then(result => {
-			response.status(201).json(result);
-		});
+	const result = await blog.save();
+	response.status(201).send(result);
 });
 
 // Exports
