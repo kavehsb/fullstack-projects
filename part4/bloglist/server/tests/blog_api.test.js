@@ -54,6 +54,29 @@ test('each blog has an id property', async () => {
 	response.forEach(blog => expect(blog.id).toBeDefined());
 });
 
+// Test a POST request to the database is successful
+test('create a new blog for the db', async () => {
+	const newBlog = {
+		title: 'supertest',
+		author: 'Kav',
+		url: 'apitest.com',
+		likes: 0
+	};
+
+	await api
+		.post('/api/blogs')
+		.send(newBlog)
+		.expect(201)
+		.expect('Content-type', /application\/json/);
+
+	const blogsAfter = await Blog.find({});
+	expect(blogsAfter.length).toBe(initialBlogs.length + 1);
+	console.log(blogsAfter);
+
+	const containsBlogTitle = blogsAfter.map(blog => blog.title);
+	expect(containsBlogTitle).toContainEqual('supertest');
+});
+
 // Close the DB connection after tests complete
 afterAll(() => {
 	mongoose.connection.close();
