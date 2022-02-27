@@ -14,6 +14,17 @@ blogsRouter.get('/', async (request, response) => {
 });
 
 /**
+ * Retrieve a specfic note from the blog database at the route
+ * /api/blogs/:id where id is the id of the blog that is requested
+ * to be retrieved. This then sends back that specific blog as
+ * a response of type JSON.
+ */
+blogsRouter.get('/:id', async (request, response) => {
+	const blog = await Blog.findById(request.params.id);
+	response.send(blog);
+});
+
+/**
  * Creates a new blog with the request parameters and
  * saves it to the database. This returns a response with
  * status 201 if successful and the respective request body
