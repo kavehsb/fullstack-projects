@@ -1,6 +1,7 @@
 // Imports
 const express = require('express');
 const app = express();
+require('express-async-errors');
 const cors = require('cors');
 const mongoose = require('mongoose');
 const { MONGODB_URI } = require('./utils/config');
@@ -21,6 +22,7 @@ app.use(express.json());
 app.use(middleware.requestLogger);
 app.use('/api/blogs', blogsRouter);
 app.use(middleware.unknownEndpoint);
+app.use(middleware.errorHandler);
 
 // Exports
 module.exports = app;

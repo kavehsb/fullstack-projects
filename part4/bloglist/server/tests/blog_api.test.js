@@ -92,6 +92,31 @@ test('likes defaults to 0', async () => {
 	expect(response.body.likes).toBe(0);
 });
 
+// Test that if a title or url property is missing from the request
+// the server will response with status 400 bad request
+test('bad request if missing title/url', async () => {
+	const blogNoTitle = {
+		author: 'Kav',
+		url: 'Notitle.com',
+		likes: 0
+	};
+	const blogNoUrl = {
+		title: 'blog no url',
+		author: 'Kav',
+		likes: 0
+	};
+
+	await api
+		.post('/api/blogs')
+		.send(blogNoTitle)
+		.expect(400);
+
+	await api
+		.post('/api/blogs')
+		.send(blogNoUrl)
+		.expect(400);
+});
+
 // Close the DB connection after tests complete
 afterAll(() => {
 	mongoose.connection.close();
