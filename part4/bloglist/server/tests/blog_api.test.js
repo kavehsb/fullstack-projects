@@ -32,6 +32,8 @@ beforeEach(async () => {
 	console.log('initial data stored');
 });
 
+// Helper variable for get requests to a specific resource
+let getID;
 describe('get request tests', () => {
 	// Test if the returned note from get are in correct format
 	test('notes returned from GET are in json format', async () => {
@@ -46,6 +48,30 @@ describe('get request tests', () => {
 		const response = await api.get('/api/blogs');
 
 		expect(response.body).toHaveLength(initialBlogs.length);
+	});
+
+	// Test GET request to a specific resource given an id
+	test('get blog from /api/blogs/:id', async () => {
+		const result = await Blog.findOne();
+		getID = result._id.toString();
+		const response = await api.get(`/api/blogs/${getID}`);
+
+		expect(response.status).toBe(200);
+		expect(response.type).toBe('application/json');
+	});
+
+	// Test GET request to nonexistent resource
+	test('get blog that doesnt exist returns 404 not found', async () => {
+		await api
+			.get('/api/blogs/621bdc85c2dc2f03d1707616')
+			.expect(404);
+	});
+
+	// Test GET request to malformatted id
+	test('get blog with malformatted if returns 400 bad request', async () => {
+		await api
+			.get('/api/blogs/1')
+			.expect(400);
 	});
 });
 
