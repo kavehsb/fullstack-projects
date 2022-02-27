@@ -39,6 +39,20 @@ blogsRouter.post('/', async (request, response) => {
 });
 
 /**
+ * Updates a blog resource depending on the input id. This request will update
+ * the document for that corresponding blog id at the database level. However,
+ * if that document doesn't exist, a 404 will be returned.
+ */
+blogsRouter.put('/:id', async (request, response) => {
+	const result = await Blog.findByIdAndUpdate(request.params.id, request.body);
+	if (result) {
+		response.status(204).end();
+	}
+	response.status(404).end();
+});
+
+
+/**
  * Deletes a blog at the given api url with a specific id identifier.
  * This must update at the database level and remove the document and only
  * that specific document.

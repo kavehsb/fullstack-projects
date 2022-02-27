@@ -182,6 +182,48 @@ describe('delete request tests', () => {
 	});
 });
 
+// Helper variable for put requests at specific id
+let putID;
+const updatedBlog = {
+	title: 'updated',
+	author: 'updated',
+	url: 'updated.com',
+	likes: 10
+};
+describe('put request tests', () => {
+	// Test a put request is successful with an existing blog in the database
+	test('put request on existing blog is successful', async () => {
+		const result = await Blog.findOne();
+		putID = result._id.toString();
+		await api
+			.put(`/api/blogs/${putID}`)
+			.send(updatedBlog)
+			.expect(204);
+
+		const blogsAfter = await Blog.find({});
+		expect(blogsAfter.length).toBe(initialBlogs.length);
+
+		const containsBlogTitle = blogsAfter.map(blog => blog.title);
+		expect(containsBlogTitle).toContain('updated');
+	});
+
+	// Test a put request is unsuccessful with a nonexistent blog in the database
+	test('put request on nonexistent blog returns 404 not found', async () => {
+		await api
+			.put('/api/blogs/621bdc85c2dc2f03d1707616')
+			.send(updatedBlog)
+			.expect(404);
+	});
+
+	// Test a put request is unsuccessful with malformatted id
+	test('put request with malformatted id returns 400 bad request', async () => {
+		await api
+			.put('/api/blogs/1')
+			.send(updatedBlog)
+			.expect(400);
+	});
+});
+
 // Close the DB connection after tests complete
 afterAll(() => {
 	mongoose.connection.close();
