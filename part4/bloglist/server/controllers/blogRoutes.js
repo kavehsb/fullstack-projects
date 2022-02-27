@@ -31,9 +31,21 @@ blogsRouter.get('/:id', async (request, response) => {
  */
 blogsRouter.post('/', async (request, response) => {
 	const blog = new Blog(request.body);
-
 	const result = await blog.save();
 	response.status(201).send(result);
+});
+
+/**
+ * Deletes a blog at the given api url with a specific id identifier.
+ * This must update at the database level and remove the document and only
+ * that specific document.
+ */
+blogsRouter.delete('/:id', async (request, response) => {
+	const result = await Blog.findByIdAndRemove(request.params.id);
+	if (result) {
+		response.status(204).end();
+	}
+	response.status(404).end();
 });
 
 // Exports
