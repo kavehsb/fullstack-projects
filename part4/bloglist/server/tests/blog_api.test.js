@@ -77,6 +77,21 @@ test('create a new blog for the db', async () => {
 	expect(containsBlogTitle).toContainEqual('supertest');
 });
 
+// Test that the likes property defaults to 0 if no like input
+test('likes defaults to 0', async () => {
+	const blogNoLikes = {
+		title: 'blog with no likes',
+		author: 'Kav',
+		url: 'Nolikestest.com',
+	};
+
+	const response = await api
+		.post('/api/blogs')
+		.send(blogNoLikes);
+
+	expect(response.body.likes).toBe(0);
+});
+
 // Close the DB connection after tests complete
 afterAll(() => {
 	mongoose.connection.close();
