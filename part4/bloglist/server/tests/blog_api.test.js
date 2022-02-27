@@ -158,6 +158,9 @@ describe('delete request tests', () => {
 		await api
 			.delete(`/api/blogs/${deleteID}`)
 			.expect(204);
+
+		const blogsAfter = await Blog.find({});
+		expect(blogsAfter.length).toBe(initialBlogs.length - 1);
 	});
 
 	// Test a delete request to an already deleted resource
