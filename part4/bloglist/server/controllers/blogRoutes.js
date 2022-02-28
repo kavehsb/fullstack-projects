@@ -44,9 +44,9 @@ blogsRouter.post('/', async (request, response) => {
  * if that document doesn't exist, a 404 will be returned.
  */
 blogsRouter.put('/:id', async (request, response) => {
-	const result = await Blog.findByIdAndUpdate(request.params.id, request.body);
+	const result = await Blog.findByIdAndUpdate(request.params.id, request.body, { new: true, runValidators: true, context: 'query' });
 	if (result) {
-		response.status(204).end();
+		response.status(200).send(result);
 	}
 	response.status(404).end();
 });

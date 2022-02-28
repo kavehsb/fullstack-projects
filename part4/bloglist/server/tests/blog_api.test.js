@@ -193,21 +193,41 @@ const updatedBlog = {
 	url: 'updated.com',
 	likes: 10
 };
+const invalidUpdatedBlog = {
+	author: 5,
+	url: 'invalid.com',
+	likes: 'invalid'
+};
 describe('put request tests', () => {
 	// Test a put request is successful with an existing blog in the database
 	test('put request on existing blog is successful', async () => {
 		const result = await Blog.findOne();
 		putID = result._id.toString();
-		await api
+		const response = await api
 			.put(`/api/blogs/${putID}`)
 			.send(updatedBlog)
-			.expect(204);
+			.expect(200);
+
+		expect(response.body.title).toBe('updated');
+		expect(response.body.author).toBe('updated');
+		expect(response.body.url).toBe('updated.com');
+		expect(response.body.likes).toBe(10);
 
 		const blogsAfter = await Blog.find({});
 		expect(blogsAfter.length).toBe(initialBlogs.length);
 
 		const containsBlogTitle = blogsAfter.map(blog => blog.title);
 		expect(containsBlogTitle).toContain('updated');
+	});
+
+	// Test a put request is unsuccessful if new request body does not pass validation
+	test('put request with invalid content returns 400 bad request', async () => {
+		const result = await Blog.findOne();
+		putID = result._id.toString();
+		await api
+			.put(`/api/blogs/${putID}`)
+			.send(invalidUpdatedBlog)
+			.expect(400);
 	});
 
 	// Test a put request is unsuccessful with a nonexistent blog in the database
