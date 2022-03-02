@@ -55,6 +55,23 @@ describe('Tests for post requests to the user api', () => {
 		expect(containsUserName).toContainEqual('supertest123');
 	});
 
+	// Test post request with existing username is not successful
+	test('creation of user with username already in database returns 400 bad request', async () => {
+		const existingUser = {
+			username: 'test',
+			name: 'I exist in the db',
+			password: 'usernameExists'
+		};
+
+		await api
+			.post('/api/users')
+			.send(existingUser)
+			.expect(400);
+
+		const usersAfter = await User.find({});
+		expect(usersAfter.length).toBe(initialData.length);
+	});
+
 	// Test post request with invalid username is not successful
 	test('username of length < 3 returns 400 bad request', async () => {
 		const invalidUsername = {
