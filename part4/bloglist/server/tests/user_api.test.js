@@ -63,10 +63,13 @@ describe('Tests for post requests to the user api', () => {
 			password: 'usernameExists'
 		};
 
-		await api
+		const response = await api
 			.post('/api/users')
 			.send(existingUser)
-			.expect(400);
+			.expect(400)
+			.expect('Content-type', /application\/json/);
+
+		expect(response.body.error).toContain('username must be unique');
 
 		const usersAfter = await User.find({});
 		expect(usersAfter.length).toBe(initialData.length);
@@ -97,10 +100,13 @@ describe('Tests for post requests to the user api', () => {
 			password: 'no'
 		};
 
-		await api
+		const response = await api
 			.post('/api/users')
 			.send(invalidPassword)
-			.expect(400);
+			.expect(400)
+			.expect('Content-type', /application\/json/);
+
+		expect(response.body.error).toContain('password length is less than the minimum 3');
 
 		const usersAfter = await User.find({});
 		expect(usersAfter.length).toBe(initialData.length);
@@ -129,10 +135,13 @@ describe('Tests for post requests to the user api', () => {
 			name: 'I have no password'
 		};
 
-		await api
+		const response = await api
 			.post('/api/users')
 			.send(noPassword)
-			.expect(400);
+			.expect(400)
+			.expect('Content-type', /application\/json/);
+
+		expect(response.body.error).toContain('no password');
 
 		const usersAfter = await User.find({});
 		expect(usersAfter.length).toBe(initialData.length);
