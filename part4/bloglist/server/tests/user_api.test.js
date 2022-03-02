@@ -33,6 +33,8 @@ beforeEach(async () => {
 
 // Tests for post requests to the user api
 describe('Tests for post requests to the user api', () => {
+
+	// Test post request to api is successful
 	test('test creation of a new user is stored to the database', async () => {
 		const newUser = {
 			username: 'supertest123',
@@ -51,6 +53,72 @@ describe('Tests for post requests to the user api', () => {
 
 		const containsUserName = await usersAfter.map(user => user.username);
 		expect(containsUserName).toContainEqual('supertest123');
+	});
+
+	// Test post request with invalid username is not successful
+	test('username of length < 3 returns 400 bad request', async () => {
+		const invalidUsername = {
+			username: 'hi',
+			name: 'I am hi',
+			password: 'hi123'
+		};
+
+		await api
+			.post('/api/users')
+			.send(invalidUsername)
+			.expect(400);
+
+		const usersAfter = await User.find({});
+		expect(usersAfter.length).toBe(initialData.length);
+	});
+
+	// Test post request with invalid password is not successful
+	test('password of length < 3 returns 400 bad request', async () => {
+		const invalidPassword = {
+			username: 'validusername',
+			name: 'invalid password',
+			password: 'no'
+		};
+
+		await api
+			.post('/api/users')
+			.send(invalidPassword)
+			.expect(400);
+
+		const usersAfter = await User.find({});
+		expect(usersAfter.length).toBe(initialData.length);
+	});
+
+	// Test post request with no username is not successful
+	test('no username returns 400 bad request', async () => {
+		const noUsername = {
+			name: 'I have no username',
+			password: 'nousername'
+		};
+
+		await api
+			.post('/api/users')
+			.send(noUsername)
+			.expect(400);
+
+		const usersAfter = await User.find({});
+		expect(usersAfter.length).toBe(initialData.length);
+	});
+
+	// Test post request with no password is not successful
+	test('no password returns 400 bad request', async() => {
+		const noPassword = {
+			username: 'nopassword123',
+			name: 'I have no password'
+		};
+
+		await api
+			.post('/api/users')
+			.send(noPassword)
+			.expect(400);
+
+		const usersAfter = await User.find({});
+		expect(usersAfter.length).toBe(initialData.length);
 	});
 });
 
