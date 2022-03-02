@@ -5,13 +5,25 @@ const bcrypt = require('bcrypt');
 
 
 /**
- * Router get function to retrieve basic user information from the database.
+ * Router get request to retrieve basic user information from the database.
  * This information does not include the password or password hash as in the
  * user model we get rid of the password hash for the response JSON
  */
 userRouter.get('/', async (request, response) => {
 	const users = await User.find({}).populate('blogs', ({ title: 1, author: 1, url: 1 }));
 	response.send(users);
+});
+
+/**
+ * Router get request to retrieve basic user information from the database for
+ * one specfic user given by the id in the request params.
+ */
+userRouter.get('/:id', async (request, response) => {
+	const user = await User.findById(request.params.id).populate('blogs', { title: 1, author: 1, url: 1 });
+	if (user) {
+		response.send(user);
+	}
+	response.status(404).end();
 });
 
 /**
