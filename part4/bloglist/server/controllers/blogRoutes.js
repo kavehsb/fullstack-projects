@@ -1,6 +1,7 @@
 // Imports
 const blogsRouter = require('express').Router();
 const Blog = require('../models/blog');
+const User = require('../models/user');
 
 /**
  * Retrieve all the blog database at the route /api/blogs
@@ -9,7 +10,7 @@ const Blog = require('../models/blog');
  * database. Then sends back the data as a response of type JSON.
  */
 blogsRouter.get('/', async (request, response) => {
-	const blogs = await Blog.find({});
+	const blogs = await Blog.find({}).populate('users', { username: 1, name: 1 });
 	response.send(blogs);
 });
 
@@ -20,7 +21,7 @@ blogsRouter.get('/', async (request, response) => {
  * a response of type JSON.
  */
 blogsRouter.get('/:id', async (request, response) => {
-	const blog = await Blog.findById(request.params.id);
+	const blog = await Blog.findById(request.params.id).populate('users', { username: 1, name: 1 });
 	if (blog) {
 		response.send(blog);
 	}
@@ -34,7 +35,20 @@ blogsRouter.get('/:id', async (request, response) => {
  */
 blogsRouter.post('/', async (request, response) => {
 	const blog = new Blog(request.body);
-	const result = await blog.save();
+
+	const user = await User.findOne();
+
+	const newBlog = new Blog({
+		title: blog.title,
+		author: blog.author,
+		url: blog.url,
+		users: user._id
+	});
+
+	const result = await newBlog.save();
+	user.blogs = user.blogs.concat(result._id);
+	await user.save();
+
 	response.status(201).send(result);
 });
 

@@ -16,10 +16,12 @@ const blogSchema = new mongoose.Schema({
 		type: Number,
 		default: 0,
 	},
-	users: {
-		type: mongoose.Schema.Types.ObjectId,
-		ref: 'User'
-	}
+	users: [
+		{
+			type: mongoose.Schema.Types.ObjectId,
+			ref: 'User'
+		}
+	]
 });
 
 // How the BSON gets returned as JSON

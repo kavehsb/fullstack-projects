@@ -36,7 +36,7 @@ beforeEach(async () => {
 let getID;
 describe('get request tests', () => {
 	// Test if the returned note from get are in correct format
-	test('notes returned from GET are in json format', async () => {
+	test('blogs returned from GET are in json format', async () => {
 		const response = await api.get('/api/blogs');
 
 		expect(response.status).toBe(200);
