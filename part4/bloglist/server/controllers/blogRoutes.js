@@ -5,20 +5,6 @@ const User = require('../models/user');
 const jwt = require('jsonwebtoken');
 
 /**
- * Helper function to get the token of the user sending requests to the api.
- * The token will provide user authentication and make creating and deleting blogs
- * possibly only by those who have a token and those whose token corresponds to
- * whoever created the blog.
- */
-const getWebToken = request => {
-	const auth = request.get('authorization');
-	if (auth && auth.toLowerCase().startsWith('bearer ')) {
-		return auth.substring(7);
-	}
-	return null;
-};
-
-/**
  * Retrieve all the blog database at the route /api/blogs
  * by querying the MongoDB database via find({}) which
  * indicates we want all of the documents for this specific
@@ -50,8 +36,7 @@ blogsRouter.get('/:id', async (request, response) => {
  */
 blogsRouter.post('/', async (request, response) => {
 	const blog = new Blog(request.body);
-	const token = getWebToken(request);
-	const decodeToken = jwt.verify(token, process.env.SECRET);
+	const decodeToken = jwt.verify(request.token, process.env.SECRET);
 	if (!decodeToken.id) {
 		return response.status(401).json({
 			error: 'invalid or missing token'

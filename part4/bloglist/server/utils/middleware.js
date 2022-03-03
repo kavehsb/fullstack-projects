@@ -36,9 +36,21 @@ const errorHandler = (error, request, response, next) => {
 	next(error);
 };
 
+// Token extractor function that will get the token from the authorization header
+// and put it in the token field of the request object
+const tokenExtractor = (request, response, next) => {
+	const auth = request.get('authorization');
+	if (auth && auth.toLowerCase().startsWith('bearer ')) {
+		request.token = auth.substring(7);
+	}
+
+	next();
+};
+
 // Exports
 module.exports = {
 	requestLogger,
 	unknownEndpoint,
 	errorHandler,
+	tokenExtractor,
 };
