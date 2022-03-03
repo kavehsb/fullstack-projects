@@ -21,7 +21,17 @@ const errorHandler = (error, request, response, next) => {
 	if (error.name === 'ValidationError') {
 		response.status(400).send(error.message);
 	} else if (error.name === 'CastError') {
-		response.status(400).send({ error: 'malformatted id' });
+		response.status(400).send({
+			error: 'malformatted id'
+		});
+	} else if (error.name === 'JsonWebTokenError') {
+		return response.status(401).send({
+			error: 'invalid token'
+		});
+	} else if (error.name === 'TokenExpiredError') {
+		return response.status(401).send({
+			error: 'token expired'
+		});
 	}
 	next(error);
 };
