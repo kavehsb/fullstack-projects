@@ -8,6 +8,7 @@ const { MONGODB_URI } = require('./utils/config');
 const logger = require('./utils/logger');
 const blogsRouter = require('./controllers/blogRoutes');
 const userRouter = require('./controllers/userRoutes');
+const loginRouter = require('./controllers/login');
 const middleware = require('./utils/middleware');
 
 // Connect to the database via the .env MONGODB_URI
@@ -23,6 +24,7 @@ app.use(express.json());
 app.use(middleware.requestLogger);
 app.use('/api/blogs', blogsRouter);
 app.use('/api/users', userRouter);
+app.use('/api/login', loginRouter);
 app.use(middleware.unknownEndpoint);
 app.use(middleware.errorHandler);
 
