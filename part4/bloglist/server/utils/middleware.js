@@ -1,5 +1,6 @@
 // Imports
 const logger = require('./logger');
+const jwt = require('jsonwebtoken');
 
 // Logs requests made to the server to understand what data
 // is being sent and retrieved
@@ -47,10 +48,18 @@ const tokenExtractor = (request, response, next) => {
 	next();
 };
 
+// User extractor middleware that will get the user information linked with the
+// request and set them to the request.user object
+const userExtractor = (request, response, next) => {
+	request.user = jwt.verify(request.token, process.env.SECRET);
+	next();
+};
+
 // Exports
 module.exports = {
 	requestLogger,
 	unknownEndpoint,
 	errorHandler,
 	tokenExtractor,
+	userExtractor,
 };

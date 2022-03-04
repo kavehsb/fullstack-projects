@@ -2,7 +2,7 @@
 const blogsRouter = require('express').Router();
 const Blog = require('../models/blog');
 const User = require('../models/user');
-const jwt = require('jsonwebtoken');
+const{ userExtractor } = require('../utils/middleware');
 
 /**
  * Retrieve all the blog database at the route /api/blogs
@@ -34,16 +34,16 @@ blogsRouter.get('/:id', async (request, response) => {
  * saves it to the database. This returns a response with
  * status 201 if successful and the respective request body
  */
-blogsRouter.post('/', async (request, response) => {
-	const blog = new Blog(request.body);
-	const decodeToken = jwt.verify(request.token, process.env.SECRET);
-	if (!decodeToken.id) {
+blogsRouter.post('/', userExtractor, async (request, response) => {
+	const reqUser = request.user;
+	if (!reqUser) {
 		return response.status(401).send({
 			error: 'invalid or missing token'
 		});
 	}
 
-	const user = await User.findById(decodeToken.id);
+	const blog = new Blog(request.body);
+	const user = await User.findById(reqUser.id);
 
 	const newBlog = new Blog({
 		title: blog.title,
@@ -79,9 +79,9 @@ blogsRouter.put('/:id', async (request, response) => {
  * This must update at the database level and remove the document and only
  * that specific document.
  */
-blogsRouter.delete('/:id', async (request, response) => {
-	const decodeToken = jwt.verify(request.token, process.env.SECRET);
-	if (!decodeToken) {
+blogsRouter.delete('/:id', userExtractor, async (request, response) => {
+	const user = request.user;
+	if (!user) {
 		return response.status(401).send({
 			error: 'invalid or missing token'
 		});
@@ -90,7 +90,7 @@ blogsRouter.delete('/:id', async (request, response) => {
 	const blog = await Blog.findById(request.params.id);
 	if (!blog) {
 		return response.status(404).end();
-	} else if (blog.user.toString() === decodeToken.id) {
+	} else if (blog.user.toString() === user.id) {
 		const result = await Blog.deleteOne(blog);
 		if (result) {
 			response.status(204).end();
