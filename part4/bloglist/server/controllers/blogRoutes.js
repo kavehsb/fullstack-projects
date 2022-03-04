@@ -38,7 +38,7 @@ blogsRouter.post('/', async (request, response) => {
 	const blog = new Blog(request.body);
 	const decodeToken = jwt.verify(request.token, process.env.SECRET);
 	if (!decodeToken.id) {
-		return response.status(401).json({
+		return response.status(401).send({
 			error: 'invalid or missing token'
 		});
 	}
@@ -49,7 +49,7 @@ blogsRouter.post('/', async (request, response) => {
 		title: blog.title,
 		author: blog.author,
 		url: blog.url,
-		users: user._id
+		user: user._id
 	});
 
 	const result = await newBlog.save();
@@ -66,6 +66,7 @@ blogsRouter.post('/', async (request, response) => {
  */
 blogsRouter.put('/:id', async (request, response) => {
 	const result = await Blog.findByIdAndUpdate(request.params.id, request.body, { new: true, runValidators: true, context: 'query' });
+
 	if (result) {
 		response.status(200).send(result);
 	}
@@ -79,11 +80,27 @@ blogsRouter.put('/:id', async (request, response) => {
  * that specific document.
  */
 blogsRouter.delete('/:id', async (request, response) => {
-	const result = await Blog.findByIdAndRemove(request.params.id);
-	if (result) {
-		response.status(204).end();
+	const decodeToken = jwt.verify(request.token, process.env.SECRET);
+	if (!decodeToken) {
+		return response.status(401).send({
+			error: 'invalid or missing token'
+		});
 	}
-	response.status(404).end();
+
+	const blog = await Blog.findById(request.params.id);
+	if (!blog) {
+		return response.status(404).end();
+	} else if (blog.user.toString() === decodeToken.id) {
+		const result = await Blog.deleteOne(blog);
+		if (result) {
+			response.status(204).end();
+		}
+		response.status(404).end();
+	} else {
+		return response.status(401).send({
+			error: 'cannot remove another user post'
+		});
+	}
 });
 
 // Exports
