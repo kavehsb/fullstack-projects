@@ -11,7 +11,7 @@ const jwt = require('jsonwebtoken');
  * database. Then sends back the data as a response of type JSON.
  */
 blogsRouter.get('/', async (request, response) => {
-	const blogs = await Blog.find({}).populate('users', { username: 1, name: 1 });
+	const blogs = await Blog.find({}).populate('user', { username: 1, name: 1 });
 	response.send(blogs);
 });
 
@@ -22,7 +22,7 @@ blogsRouter.get('/', async (request, response) => {
  * a response of type JSON.
  */
 blogsRouter.get('/:id', async (request, response) => {
-	const blog = await Blog.findById(request.params.id).populate('users', { username: 1, name: 1 });
+	const blog = await Blog.findById(request.params.id).populate('user', { username: 1, name: 1 });
 	if (blog) {
 		response.send(blog);
 	}
